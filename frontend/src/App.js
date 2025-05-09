@@ -6,6 +6,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Train from './pages/Train';
 import Test from './pages/Test';
+import IPChecker from './pages/IPChecker';
 
 const theme = createTheme({
   palette: {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/train" element={<Train />} />
             <Route path="/test" element={<Test />} />
+            <Route path="/ip-checker" element={<IPChecker />} />
           </Routes>
         </Layout>
       </Router>

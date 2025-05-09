@@ -2,6 +2,7 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import SecurityIcon from '@mui/icons-material/Security';
+import GppMaybeIcon from '@mui/icons-material/GppMaybe';
 
 const Layout = ({ children }) => {
   return (
@@ -20,6 +21,14 @@ const Layout = ({ children }) => {
           </Button>
           <Button color="inherit" component={RouterLink} to="/test">
             Test Model
+          </Button>
+          <Button 
+            color="inherit" 
+            component={RouterLink} 
+            to="/ip-checker"
+            startIcon={<GppMaybeIcon />}
+          >
+            IP Checker
           </Button>
         </Toolbar>
       </AppBar>

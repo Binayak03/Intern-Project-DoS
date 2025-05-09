@@ -5,6 +5,8 @@ import time
 import os
 import sys
 import pandas as pd
+import ipaddress
+import random
 
 # Get the absolute path of the current directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -26,6 +28,41 @@ training_progress = {
     'tcp_syn': {'stage': 'waiting', 'percentage': 0, 'message': 'Waiting to start...'},
     'udp': {'stage': 'waiting', 'percentage': 0, 'message': 'Waiting to start...'}
 }
+
+# Firewall rules configuration
+firewall_rules = {
+    "blocked_ips": [
+        ipaddress.ip_network("169.233.0.0/16"),
+        ipaddress.ip_network("10.0.0.0/8"), 
+        ipaddress.ip_network("172.16.0.0/12"),  
+        ipaddress.ip_network("192.168.0.0/16")
+    ],
+    "malicious_ips": {
+        ipaddress.ip_address("45.155.205.99"),
+        ipaddress.ip_address("185.220.101.1"),
+        ipaddress.ip_address("103.81.214.226"),
+        ipaddress.ip_address("198.96.155.3"),
+    },
+    "suspicious_ips": {
+        ipaddress.ip_address("66.240.236.119"),
+        ipaddress.ip_address("209.126.136.4"),
+        ipaddress.ip_address("162.247.74.200"),
+    }
+}
+
+def check_firewall_rule(ip, firewall_rules):
+    try:
+        ip = ipaddress.ip_address(ip)
+        for network in firewall_rules["blocked_ips"]:
+            if ip in network:
+                return "Blocked IP"
+        if ip in firewall_rules["malicious_ips"]:
+            return "Malicious IP"
+        if ip in firewall_rules["suspicious_ips"]:
+            return "Suspicious IP"
+        return "Normal IP"
+    except ValueError:
+        return "Invalid IP Address"
 
 def train_model(protocol, classifier):
     """Start training in a separate thread"""
@@ -202,6 +239,31 @@ def test():
 @app.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'ok', 'message': 'Backend server is running'})
+
+@app.route('/api/check-ip', methods=['POST'])
+def check_ip():
+    try:
+        data = request.get_json()
+        ip_address = data.get('ip_address')
+        
+        if not ip_address:
+            return jsonify({'status': 'error', 'error': 'IP address is required'}), 400
+            
+        result = check_firewall_rule(ip_address, firewall_rules)
+        
+        return jsonify({
+            'status': 'success',
+            'ip_address': ip_address,
+            'result': result
+        })
+        
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error in /api/check-ip endpoint: {error_msg}")
+        return jsonify({
+            'status': 'error',
+            'error': f'Error checking IP: {error_msg}'
+        }), 500
 
 if __name__ == '__main__':
     # Ensure we start in the correct directory
