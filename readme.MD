@@ -85,7 +85,25 @@ These are few sample attributes of each attack. You can test and compare the res
 
 
 
+## Dependencies needed :
+ 1. flask
+ 2. numpy
+ 3. scikit-learn
+ 3. npm
+ 4. pandas
 
+
+## How to run this ?
+-> Select the folder where you have this program
+   cd folder_name
+   1. Run Backend server
+      ````python app.py
+
+   2. Run Frontend
+      ````cd frontend
+      ````npm start
+
+  3. Open Localhost and train and test
 
 
 
